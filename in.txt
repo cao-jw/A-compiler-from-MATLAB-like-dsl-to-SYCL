@@ -1,0 +1,44 @@
+{
+int [10][10] a
+int [10][20] b
+int [20][10] c
+for (i=1:1:10)
+for(j=1:1:20)
+{
+    b[i][j] = (i+j)
+    c[j][i] = (i*j)
+}
+for (i=1:1:10)
+for(j=1:1:10)
+{
+    a[i][j] = 0
+}
+int j
+j = 1
+while(j<=10)
+{
+    for (i=1:1:10)
+    for(k=1:1:10)
+    {
+        a[i][k] = (a[i][k]+b[i][j]*c[j][k])
+    }
+    j = (j+1)
+}
+}
+
+
+
+q1.parallel_for(range<2>(10,10), [=] (id<2> idx) {
+int i = idx[0] * 1 + 1;
+int j = idx[1] * 1 + 1;
+a[((j-1)*10+i-1)] = 0;
+}).wait();
+int j = 1;
+while(j<=10){
+q1.parallel_for(range<2>(10,10), [=] (id<2> idx) {
+int i = idx[0] * 1 + 1;
+int k = idx[1] * 1 + 1;
+a[((k-1)*10+i-1)] = (a[((k-1)*10+i-1)]+b[((j-1)*20+i-1)]*c[((k-1)*10+j-1)]);
+}).wait();
+    j = j +1;
+}
